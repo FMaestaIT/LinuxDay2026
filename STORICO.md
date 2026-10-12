@@ -12,7 +12,7 @@ Diario di lavoro del laboratorio Linux Day 2026: cosa è stato fatto, le decisio
 | Elemento | Stato |
 |---|---|
 | Infrastruttura Azure | Creata: 3 VM (lamp, api, broken) in Italy North, un resource group ciascuna |
-| VM | **Accese**: ricordarsi `lab/lab.sh stop` (niente auto-shutdown) |
+| VM | **Spente** (deallocate) dal 2026-10-12. Per riaccenderle: `lab/lab.sh start`, poi ~2 minuti di attesa. Gli IP sono statici e non cambiano |
 | vm-broken | Guasti presenti (ultimo `break.sh` eseguito il 2026-10-12) |
 | Workspace demo | Pronto in `demo/`; il dialogo di fiducia di Claude Code **non è ancora stato accettato** |
 | Repository | Pubblicato su GitHub, branch `main` |
@@ -43,6 +43,8 @@ Diario di lavoro del laboratorio Linux Day 2026: cosa è stato fatto, le decisio
 6. Scritti `lab/lab.sh` (start/stop/status) e `lab/break.sh` (ripristino e controllo dei guasti). `break.sh` è stato testato sul ciclo completo: correzione manuale → HTTP 200 → `break.sh` → guasti di nuovo presenti.
 7. Scritti `lab/COPIONE.md` (scaletta), `lab/README.md` (dettagli tecnici con registro delle modifiche) e `README.md` (summary di scenari e metodologia).
 8. Riorganizzato tutto nel repository `~/LinuxDay2026` (`claude-lab` → `lab/`, `claude-demo` → `demo/`), aggiornato ogni percorso e pubblicato su GitHub.
+
+9. Creato questo `STORICO.md`. A fine giornata spente le 3 VM con `lab.sh stop` (deallocate: si pagano solo dischi e IP).
 
 **Decisioni**
 - **Un resource group per VM**, su richiesta, per tenere gli scenari isolati.
