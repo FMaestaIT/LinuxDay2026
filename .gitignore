@@ -1,0 +1,12 @@
+# Segreti e file generati da Terraform
+lab/.env.lab
+lab/ssh_config
+lab/infra/terraform.tfvars
+lab/infra/.terraform/
+lab/infra/.terraform.lock.hcl.bak
+lab/infra/terraform.tfstate*
+lab/infra/*.tfplan
+demo/.claude/settings.local.json
+
+# Python
+__pycache__/

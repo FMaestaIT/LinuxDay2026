@@ -1,0 +1,62 @@
+#cloud-config
+package_update: true
+package_upgrade: false
+packages:
+  - apache2
+  - mariadb-server
+  - php
+  - libapache2-mod-php
+  - php-mysql
+
+write_files:
+  - path: /var/www/html/index.php
+    permissions: "0644"
+    content: |
+      ${indent(6, rubrica_php)}
+
+  - path: /var/www/html/config.php
+    permissions: "0640"
+    content: |
+      <?php
+      $db_host = 'localhost';
+      $db_name = 'rubrica';
+      $db_user = 'rubrica';
+      $db_pass = '${app_password}';
+
+  - path: /root/rubrica-init.sql
+    permissions: "0600"
+    content: |
+      CREATE DATABASE IF NOT EXISTS rubrica CHARACTER SET utf8mb4;
+      CREATE USER IF NOT EXISTS 'rubrica'@'localhost' IDENTIFIED BY '${db_password}';
+      GRANT ALL PRIVILEGES ON rubrica.* TO 'rubrica'@'localhost';
+      USE rubrica;
+      CREATE TABLE IF NOT EXISTS contatti (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nome VARCHAR(100) NOT NULL,
+        email VARCHAR(150),
+        creato_il TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+      INSERT INTO contatti (nome, email) VALUES
+        ('Ada Lovelace', 'ada@example.com'),
+        ('Alan Turing', 'alan@example.com'),
+        ('Grace Hopper', 'grace@example.com');
+%{ if apache_extra ~}
+
+  - path: /etc/apache2/conf-available/security-hardening.conf
+    permissions: "0644"
+    content: |
+      # Hardening applicato il 2026-09-28 (ticket OPS-1432)
+      ServerTokens Prod
+      ServerSignature Off
+      Include /etc/apache2/hardening/headers.conf
+%{ endif ~}
+
+runcmd:
+  - rm -f /var/www/html/index.html
+  - chown root:www-data /var/www/html/config.php
+  - systemctl enable --now mariadb
+  - mysql < /root/rubrica-init.sql && rm -f /root/rubrica-init.sql
+%{ if apache_extra ~}
+  - a2enconf security-hardening
+%{ endif ~}
+  - systemctl restart apache2 || true

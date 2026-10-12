@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(az vm show *)",
+      "Bash(az vm list *)",
+      "Bash(az vm get-instance-view *)",
+      "Bash(az vm boot-diagnostics get-boot-log *)",
+      "Bash(az network nsg show *)",
+      "Bash(az network nsg list *)",
+      "Bash(az network nsg rule list *)",
+      "Bash(az network nsg rule show *)",
+      "Bash(az network public-ip show *)",
+      "Bash(az network public-ip list *)",
+      "Bash(az network nic show *)",
+      "Bash(az monitor metrics list *)",
+      "Bash(az group list *)",
+      "Bash(az resource list *)"
+    ],
+    "deny": [
+      "Bash(az group delete *)",
+      "Bash(az vm delete *)",
+      "Bash(az vm deallocate *)",
+      "Bash(az vm stop *)",
+      "Bash(az vm restart *)",
+      "Bash(terraform *)",
+      "Read(//home/federico/LinuxDay2026/lab/**)",
+      "Bash(cat /home/federico/LinuxDay2026/lab/*)",
+      "Bash(grep * /home/federico/LinuxDay2026/lab/*)"
+    ]
+  }
+}

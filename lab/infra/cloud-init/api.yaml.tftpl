@@ -1,0 +1,70 @@
+#cloud-config
+package_update: true
+package_upgrade: false
+packages:
+  - nginx
+  - python3-fastapi
+  - python3-uvicorn
+
+users:
+  - default
+  - name: labapi
+    system: true
+    shell: /usr/sbin/nologin
+    groups: [systemd-journal]
+
+write_files:
+  - path: /opt/labapi/labapi.py
+    permissions: "0644"
+    content: |
+      ${indent(6, api_py)}
+
+  - path: /etc/labapi.env
+    permissions: "0600"
+    content: |
+      API_TOKEN=${api_token}
+
+  - path: /etc/systemd/system/labapi.service
+    permissions: "0644"
+    content: |
+      [Unit]
+      Description=Claude Lab API
+      After=network-online.target
+
+      [Service]
+      User=labapi
+      EnvironmentFile=/etc/labapi.env
+      StateDirectory=labapi
+      WorkingDirectory=/opt/labapi
+      ExecStart=/usr/bin/python3 -m uvicorn labapi:app --host 127.0.0.1 --port 8000 --proxy-headers
+      Restart=on-failure
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - path: /etc/nginx/sites-available/labapi
+    permissions: "0644"
+    content: |
+      server {
+          listen 443 ssl default_server;
+          server_name _;
+          ssl_certificate     /etc/ssl/labapi/cert.pem;
+          ssl_certificate_key /etc/ssl/labapi/key.pem;
+
+          location / {
+              proxy_pass http://127.0.0.1:8000;
+              proxy_set_header Host $host;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto https;
+          }
+      }
+
+runcmd:
+  - mkdir -p /etc/ssl/labapi
+  - openssl req -x509 -nodes -newkey rsa:2048 -days 365 -subj "/CN=lab-api" -keyout /etc/ssl/labapi/key.pem -out /etc/ssl/labapi/cert.pem
+  - chmod 600 /etc/ssl/labapi/key.pem
+  - rm -f /etc/nginx/sites-enabled/default
+  - ln -sf /etc/nginx/sites-available/labapi /etc/nginx/sites-enabled/labapi
+  - systemctl daemon-reload
+  - systemctl enable --now labapi
+  - systemctl restart nginx
