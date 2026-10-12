@@ -109,6 +109,7 @@ Poi si chiede in linguaggio naturale, per esempio:
 ```
 LinuxDay2026/
 ├── README.md                 # questo documento
+├── STORICO.md                # diario di lavoro: stato attuale, decisioni, prossimi passi
 ├── demo/                     # workspace da cui si avvia Claude durante la demo
 │   ├── CLAUDE.md             # istruzioni e contesto per Claude
 │   ├── api/openapi.json      # specifica dell'API di vm-api
