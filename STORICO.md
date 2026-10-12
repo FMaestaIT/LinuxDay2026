@@ -62,3 +62,5 @@ Diario di lavoro del laboratorio Linux Day 2026: cosa è stato fatto, le decisio
 - **Workspace non ancora fidato:** finché Claude Code non è stato avviato e il dialogo accettato, le regole `allow` di `settings.json` vengono ignorate.
 - **`gh` assente:** installato da dnf. Il token GitHub è salvato in chiaro in `/root/.config/gh/hosts.yml` perché non c'è un keyring.
 - **Fedora 39 a fine vita:** i repo copr PyCharm e RPM Fusion NVIDIA danno 404 durante `dnf upgrade`. Sono innocui, ma conviene aggiornare la release del PC.
+
+10. **Verifica dati Azure nel repo:** cercati tenant ID e subscription ID reali (presi da `az account show`) nei file, nei file ignorati e in tutta la cronologia git, più ogni GUID e il nome della subscription. Nessuna occorrenza: l'unico GUID è il segnaposto `00000000-…` in `terraform.tfvars.example`; `terraform.tfvars`, state e `.env.lab` sono esclusi da `.gitignore`.
